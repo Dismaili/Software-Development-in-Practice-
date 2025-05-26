@@ -10,10 +10,10 @@
 // To get you started we've included code to prevent your Battlesnake from moving backwards.
 // For more info see docs.battlesnake.com
 
-import runServer from './server.js';
-import { preventOutOfBounds } from './preventOutOfBounds.js';
-import checkSelfCollision from './checkSelfCollision.js';
-import checkSnakeCollision from './checkSnakeCollision.js';
+import runServer from "./server.js";
+import { preventOutOfBounds } from "./preventOutOfBounds.js";
+import checkSelfCollision from "./checkSelfCollision.js";
+import checkSnakeCollision from "./checkSnakeCollision.js";
 
 function manhattanDistance(pointA, pointB) {
   return Math.abs(pointA.x - pointB.x) + Math.abs(pointA.y - pointB.y);
@@ -27,10 +27,10 @@ function info() {
 
   return {
     apiversion: "1",
-    author: "ichindris, dismaili, mmatevski, aganiu, rrama, jkotori123",      
-    color: "#1E90FF", 
+    author: "ichindris, dismaili, mmatevski, aganiu, rrama, jkotori123",
+    color: "#1E90FF",
     head: "alligator",
-    tail: "curled",  
+    tail: "curled",
   };
 }
 
@@ -48,28 +48,28 @@ function end(gameState) {
 // Valid moves are "up", "down", "left", or "right"
 // See https://docs.battlesnake.com/api/example-move for available data
 function move(gameState) {
-
   let isMoveSafe = {
     up: true,
     down: true,
     left: true,
-    right: true
+    right: true,
   };
 
   // We've included code to prevent your Battlesnake from moving backwards
   const myHead = gameState.you.body[0];
   const myNeck = gameState.you.body[1];
 
-  if (myNeck.x < myHead.x) {        // Neck is left of head, don't move left
+  if (myNeck.x < myHead.x) {
+    // Neck is left of head, don't move left
     isMoveSafe.left = false;
-
-  } else if (myNeck.x > myHead.x) { // Neck is right of head, don't move right
+  } else if (myNeck.x > myHead.x) {
+    // Neck is right of head, don't move right
     isMoveSafe.right = false;
-
-  } else if (myNeck.y < myHead.y) { // Neck is below head, don't move down
+  } else if (myNeck.y < myHead.y) {
+    // Neck is below head, don't move down
     isMoveSafe.down = false;
-
-  } else if (myNeck.y > myHead.y) { // Neck is above head, don't move up
+  } else if (myNeck.y > myHead.y) {
+    // Neck is above head, don't move up
     isMoveSafe.up = false;
   }
 
@@ -82,7 +82,7 @@ function move(gameState) {
   isMoveSafe = checkSnakeCollision(gameState, myHead, isMoveSafe);
 
   // Are there any safe moves left?
-  const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
+  const safeMoves = Object.keys(isMoveSafe).filter((key) => isMoveSafe[key]);
   if (safeMoves.length == 0) {
     console.log(`MOVE ${gameState.turn}: No safe moves detected! Moving down`);
     return { move: "down" };
@@ -93,26 +93,26 @@ function move(gameState) {
 
   const food = gameState.board.food;
 
-if (food.length > 0) {
-  const closestFood = food.reduce((closest, current) => {
-    return manhattanDistance(myHead, current) < manhattanDistance(myHead, closest)
-      ? current
-      : closest;
-  });
+  if (food.length > 0) {
+    const closestFood = food.reduce((closest, current) => {
+      return manhattanDistance(myHead, current) <
+        manhattanDistance(myHead, closest)
+        ? current
+        : closest;
+    });
 
-  if (closestFood.x < myHead.x && isMoveSafe.left) {
-    return { move: "left" };
-  } else if (closestFood.x > myHead.x && isMoveSafe.right) {
-    return { move: "right" };
-  } else if (closestFood.y < myHead.y && isMoveSafe.down) {
-    return { move: "down" };
-  } else if (closestFood.y > myHead.y && isMoveSafe.up) {
-    return { move: "up" };
+    if (closestFood.x < myHead.x && isMoveSafe.left) {
+      return { move: "left" };
+    } else if (closestFood.x > myHead.x && isMoveSafe.right) {
+      return { move: "right" };
+    } else if (closestFood.y < myHead.y && isMoveSafe.down) {
+      return { move: "down" };
+    } else if (closestFood.y > myHead.y && isMoveSafe.up) {
+      return { move: "up" };
+    }
   }
-}
 
-
-  console.log(`MOVE ${gameState.turn}: ${nextMove}`)
+  console.log(`MOVE ${gameState.turn}: ${nextMove}`);
   return { move: nextMove };
 }
 
@@ -120,5 +120,5 @@ runServer({
   info: info,
   start: start,
   move: move,
-  end: end
+  end: end,
 });
