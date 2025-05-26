@@ -15,6 +15,9 @@ import { preventOutOfBounds } from './preventOutOfBounds.js';
 import checkSelfCollision from './checkSelfCollision.js';
 import checkSnakeCollision from './checkSnakeCollision.js';
 
+function manhattanDistance(pointA, pointB) {
+  return Math.abs(pointA.x - pointB.x) + Math.abs(pointA.y - pointB.y);
+}
 
 // info is called when you create your Battlesnake on play.battlesnake.com
 // and controls your Battlesnake's appearance
@@ -88,8 +91,26 @@ function move(gameState) {
   // Choose a random move from the safe moves
   const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
 
-  // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-  // food = gameState.board.food;
+  const food = gameState.board.food;
+
+if (food.length > 0) {
+  const closestFood = food.reduce((closest, current) => {
+    return manhattanDistance(myHead, current) < manhattanDistance(myHead, closest)
+      ? current
+      : closest;
+  });
+
+  if (closestFood.x < myHead.x && isMoveSafe.left) {
+    return { move: "left" };
+  } else if (closestFood.x > myHead.x && isMoveSafe.right) {
+    return { move: "right" };
+  } else if (closestFood.y < myHead.y && isMoveSafe.down) {
+    return { move: "down" };
+  } else if (closestFood.y > myHead.y && isMoveSafe.up) {
+    return { move: "up" };
+  }
+}
+
 
   console.log(`MOVE ${gameState.turn}: ${nextMove}`)
   return { move: nextMove };
