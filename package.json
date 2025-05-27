@@ -1,3 +1,31 @@
+feat/eslint-setup
+{
+  "name": "starter-snake-javascript",
+  "version": "1.0.0",
+  "author": "BattlesnakeOfficial",
+  "description": "An official Battlesnake template written in JavaScript. Get started at play.battlesnake.com.",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BattlesnakeOfficial/starter-snake-javascript.git"
+  },
+  "dependencies": {
+    "express": "^4.20.0",
+    "starter-snake-javascript": "file:"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "eslint": "^9.27.0",
+    "globals": "^16.2.0"
+  }
+}
+
 {
   "name": "starter-snake-javascript",
   "version": "1.0.0",
@@ -23,3 +51,4 @@
     "prettier": "^3.5.3"
   }
 }
+ develop
