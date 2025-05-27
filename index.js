@@ -1,3 +1,4 @@
+
 // Welcome to
 // __________         __    __  .__                               __
 // \______   \_____ _/  |__/  |_|  |   ____   ______ ____ _____  |  | __ ____
@@ -11,6 +12,11 @@
 // For more info see docs.battlesnake.com
 
 import runServer from './server.js';
+import { preventOutOfBounds } from './preventOutOfBounds.js';
+import checkSelfCollision from './checkSelfCollision.js';
+import checkSnakeCollision from './checkSnakeCollision.js';
+import { avoidHeadToHeadMoves } from './headToHead.js';
+
 
 // info is called when you create your Battlesnake on play.battlesnake.com
 // and controls your Battlesnake's appearance
@@ -20,10 +26,10 @@ function info() {
 
   return {
     apiversion: "1",
-    author: "",       // TODO: Your Battlesnake Username
-    color: "#888888", // TODO: Choose color
-    head: "default",  // TODO: Choose head
-    tail: "default",  // TODO: Choose tail
+    author: "ichindris, dismaili, mmatevski, aganiu, rrama, jkotori123",      
+    color: "#1E90FF", 
+    head: "alligator",
+    tail: "curled",  
   };
 }
 
@@ -66,15 +72,10 @@ function move(gameState) {
     isMoveSafe.up = false;
   }
 
-  // TODO: Step 1 - Prevent your Battlesnake from moving out of bounds
-  // boardWidth = gameState.board.width;
-  // boardHeight = gameState.board.height;
-
-  // TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-  // myBody = gameState.you.body;
-
-  // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-  // opponents = gameState.board.snakes;
+  isMoveSafe = avoidHeadToHeadMoves(gameState, isMoveSafe);
+  isMoveSafe = preventOutOfBounds(myHead, gameState, isMoveSafe);
+  isMoveSafe = checkSelfCollision(gameState, myHead, isMoveSafe);
+  isMoveSafe = checkSnakeCollision(gameState, myHead, isMoveSafe);
 
   // Are there any safe moves left?
   const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
