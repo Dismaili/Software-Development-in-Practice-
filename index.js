@@ -1,3 +1,4 @@
+
 // Welcome to
 // __________         __    __  .__                               __
 // \______   \_____ _/  |__/  |_|  |   ____   ______ ____ _____  |  | __ ____
@@ -14,6 +15,7 @@ import runServer from './server.js';
 import { preventOutOfBounds } from './preventOutOfBounds.js';
 import checkSelfCollision from './checkSelfCollision.js';
 import checkSnakeCollision from './checkSnakeCollision.js';
+import { avoidHeadToHeadMoves } from './headToHead.js';
 
 
 // info is called when you create your Battlesnake on play.battlesnake.com
@@ -70,11 +72,8 @@ function move(gameState) {
     isMoveSafe.up = false;
   }
 
-  // Prevent your Battlesnake from moving out of bounds
-  // boardWidth = gameState.board.width;
-  // boardHeight = gameState.board.height;
+  isMoveSafe = avoidHeadToHeadMoves(gameState, isMoveSafe);
   isMoveSafe = preventOutOfBounds(myHead, gameState, isMoveSafe);
-
   isMoveSafe = checkSelfCollision(gameState, myHead, isMoveSafe);
   isMoveSafe = checkSnakeCollision(gameState, myHead, isMoveSafe);
 
