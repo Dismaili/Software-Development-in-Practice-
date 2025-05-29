@@ -42,10 +42,17 @@ function buildFloodBoard(gameState) {
   return board;
 }
 
+function willEat(snake, food) {
+  const head = snake.body[0];
+  return food.some(f =>
+    f.x === head.x + 1 && f.y === head.y ||
+    f.x === head.x - 1 && f.y === head.y ||
+    f.x === head.x && f.y === head.y + 1 ||
+    f.x === head.x && f.y === head.y - 1
+  );
+}
 
-// info is called when you create your Battlesnake on play.battlesnake.com
-// and controls your Battlesnake's appearance
-// TIP: If you open your Battlesnake URL in a browser you should see this data
+
 function info() {
   console.log("INFO");
 
@@ -102,6 +109,37 @@ function move(gameState) {
   isMoveSafe = preventOutOfBounds(myHead, gameState, isMoveSafe);
   isMoveSafe = checkSelfCollision(gameState, myHead, isMoveSafe);
   isMoveSafe = checkSnakeCollision(gameState, myHead, isMoveSafe);
+
+  // ✅ Iteration 3: Tail logic — allow stepping on another snake's tail if it's going to move
+const you = gameState.you;
+const food = gameState.board.food;
+const snakes = gameState.board.snakes;
+
+for (const snake of snakes) {
+  if (snake.id === you.id) continue;
+
+  const tail = snake.body[snake.body.length - 1];
+
+  for (const direction of Object.keys(isMoveSafe)) {
+    if (!isMoveSafe[direction]) continue;
+
+    let nextX = myHead.x;
+    let nextY = myHead.y;
+
+    if (direction === "up") nextY += 1;
+    if (direction === "down") nextY -= 1;
+    if (direction === "left") nextX -= 1;
+    if (direction === "right") nextX += 1;
+
+    if (nextX === tail.x && nextY === tail.y) {
+      if (willEat(snake, food)) {
+        // Tail will not move — block this move
+        isMoveSafe[direction] = false;
+      }
+    }
+  }
+}
+
 
   // Are there any safe moves left?
   const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
