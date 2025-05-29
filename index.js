@@ -16,6 +16,31 @@ import { preventOutOfBounds } from './preventOutOfBounds.js';
 import checkSelfCollision from './checkSelfCollision.js';
 import checkSnakeCollision from './checkSnakeCollision.js';
 import { avoidHeadToHeadMoves } from './headToHead.js';
+const floodFill = require('./floodFill');
+
+function getNewHeadPosition(head, direction) {
+  const moves = {
+    up: { x: head.x, y: head.y - 1 },
+    down: { x: head.x, y: head.y + 1 },
+    left: { x: head.x - 1, y: head.y },
+    right: { x: head.x + 1, y: head.y },
+  };
+  return moves[direction];
+}
+
+function buildFloodBoard(gameState) {
+  const width = gameState.board.width;
+  const height = gameState.board.height;
+  const board = Array.from({ length: height }, () => Array(width).fill('.'));
+
+  gameState.board.snakes.forEach(snake => {
+    snake.body.forEach(segment => {
+      board[segment.y][segment.x] = '#';
+    });
+  });
+
+  return board;
+}
 
 function willEat(snake, food) {
   const head = snake.body[0];
@@ -53,6 +78,7 @@ function end(gameState) {
 // move is called on every turn and returns your next move
 // Valid moves are "up", "down", "left", or "right"
 // See https://docs.battlesnake.com/api/example-move for available data
+
 function move(gameState) {
 
   let isMoveSafe = {
@@ -123,14 +149,34 @@ for (const snake of snakes) {
   }
 
   // Choose a random move from the safe moves
-  const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+  const gameBoard = buildFloodBoard(gameState);
+
+const movesWithSpace = safeMoves.map(direction => {
+  const newHead = getNewHeadPosition(myHead, direction);
+
+  if (
+    newHead.x < 0 || newHead.x >= gameState.board.width ||
+    newHead.y < 0 || newHead.y >= gameState.board.height ||
+    gameBoard[newHead.y][newHead.x] === '#'
+  ) {
+    return { direction, area: -1 };
+  }
+
+  const area = floodFill(gameBoard, newHead.x, newHead.y);
+  return { direction, area };
+});
+
+const bestMove = movesWithSpace.reduce((a, b) => (a.area > b.area ? a : b)).direction;
+
 
   // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
   // food = gameState.board.food;
 
-  console.log(`MOVE ${gameState.turn}: ${nextMove}`)
-  return { move: nextMove };
+  console.log(`MOVE ${gameState.turn}: ${bestMove}`)
+return { move: bestMove };
+
 }
+
 
 runServer({
   info: info,
