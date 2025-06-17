@@ -76,18 +76,47 @@ function move(gameState) {
   // TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
   // opponents = gameState.board.snakes;
 
-  // Are there any safe moves left?
-  const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
-  if (safeMoves.length == 0) {
-    console.log(`MOVE ${gameState.turn}: No safe moves detected! Moving down`);
-    return { move: "down" };
+  const myLength = gameState.you.length;
+  const opponents = gameState.board.snakes;
+
+  let target = null;
+  let minDistance = Infinity;
+
+  for (const snake of opponents) {
+    if (snake.id === gameState.you.id) continue;
+    if (snake.length >= myLength) continue;
+
+    const head = snake.body[0];
+    const distance = Math.abs(myHead.x - head.x) + Math.abs(myHead.y - head.y);
+
+    if (distance < minDistance) {
+      minDistance = distance;
+      target = head;
+    }
   }
 
-  // Choose a random move from the safe moves
-  const nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+  let nextMove = "down";
 
-  // TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-  // food = gameState.board.food;
+  if (target) {
+    const dx = target.x - myHead.x;
+    const dy = target.y - myHead.y;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (dx > 0 && isMoveSafe.right) nextMove = "right";
+      else if (dx < 0 && isMoveSafe.left) nextMove = "left";
+    } else {
+      if (dy > 0 && isMoveSafe.up) nextMove = "up";
+      else if (dy < 0 && isMoveSafe.down) nextMove = "down";
+    }
+  } else {
+    const safeMoves = Object.keys(isMoveSafe).filter(key => isMoveSafe[key]);
+    if (safeMoves.length == 0) {
+      console.log(`MOVE ${gameState.turn}: No safe moves detected! Moving down`);
+      return { move: "down" };
+    }
+
+    nextMove = safeMoves[Math.floor(Math.random() * safeMoves.length)];
+  }
 
   console.log(`MOVE ${gameState.turn}: ${nextMove}`)
   return { move: nextMove };
