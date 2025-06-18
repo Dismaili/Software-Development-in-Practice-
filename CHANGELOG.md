@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-06-18
+
+### Added
+- Documented all major functions using JSDoc
+- Generated HTML documentation with JSDoc and committed it to /docs
+- Implemented snake hunting logic (targeting smaller snakes)
+- Set up GitHub Actions for:
+  - Linting with ESLint and Prettier
+  - Running test suites (Jest)
+  - Coverage checks (target ≥ 50%)
+  - Deployment via Railway on push to main
+
+
 
 ---
 
